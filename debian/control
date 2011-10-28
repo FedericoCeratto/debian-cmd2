@@ -16,6 +16,7 @@ Vcs-Browser: http://git.debian.org/?p=collab-maint/cmd2.git;a=summary
 Package: python-cmd2
 Architecture: all
 Depends: ${misc:Depends}
+ , ${python:Depends}
 Description: enhanced Python cmd module
  Drop-in replacement adds several features for command-prompt tools, like
  searchable and persistent command history, multi-line commands, input and
