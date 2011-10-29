@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Federico Ceratto <federico.ceratto@gmail.com>
 DM-Upload-Allowed: yes
 Build-Depends:
- debhelper (>= 8.0.0)
+ debhelper (>= 8.0.0~)
 Build-Depends-Indep:
  python-all (>= 2.6.6-3~)
 Standards-Version: 3.9.2
