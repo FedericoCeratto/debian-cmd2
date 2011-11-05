@@ -1,3 +1,9 @@
+cmd2 (0.6.3-2) unstable; urgency=low
+
+  * Dependency to python-setuptools added
+
+ -- Federico Ceratto <federico.ceratto@gmail.com>  Sat, 05 Nov 2011 15:32:19 +0000
+
 cmd2 (0.6.3-1) unstable; urgency=low
 
   * Initial release (Closes: #647033)

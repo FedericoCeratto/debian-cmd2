@@ -17,6 +17,7 @@ Package: python-cmd2
 Architecture: all
 Depends: ${misc:Depends}
  , ${python:Depends}
+ , python-setuptools (>= 0.6.14)
 Description: enhanced Python cmd module
  Drop-in replacement adds several features for command-prompt tools, like
  searchable and persistent command history, multi-line commands, input and
