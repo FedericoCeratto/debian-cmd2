@@ -7,10 +7,10 @@ Build-Depends:
  debhelper (>= 8.0.0~)
 Build-Depends-Indep:
  python-all (>= 2.6.6-3~)
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 X-Python-Version: >= 2.5
-Homepage: http://www.assembla.com/wiki/show/python-cmd2
-Vcs-Git: git://git.debian.org/collab-maint/cmd2.git
+Homepage: https://bitbucket.org/catherinedevlin/cmd2
+Vcs-Git: git://git.debian.org/git/collab-maint/cmd2.git
 Vcs-Browser: http://git.debian.org/?p=collab-maint/cmd2.git;a=summary
 
 Package: python-cmd2
@@ -18,6 +18,7 @@ Architecture: all
 Depends: ${misc:Depends}
  , ${python:Depends}
  , python-setuptools (>= 0.6.14)
+Provides: ${python:Provides}
 Description: enhanced Python cmd module
  Drop-in replacement adds several features for command-prompt tools, like
  searchable and persistent command history, multi-line commands, input and
