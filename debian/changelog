@@ -1,4 +1,4 @@
-cmd2 (0.6.4-1) UNRELEASED; urgency=low
+cmd2 (0.6.4-1) unstable; urgency=low
 
   * New upstream release.
   * Standards-Version bumped to 3.9.3, minor updates.
