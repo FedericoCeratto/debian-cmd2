@@ -42,7 +42,7 @@ from code import InteractiveConsole, InteractiveInterpreter
 from optparse import make_option
 import pyparsing
 
-__version__ = '0.6.3'
+__version__ = '0.6.4'
 
 if sys.version_info[0] == 2:
     pyparsing.ParserElement.enablePackrat()
@@ -57,6 +57,8 @@ NameError: global name 'exc' is not defined
 
 (Pdb) parseFn
 <bound method Or._parseCache of {Python style comment ^ C style comment}>
+
+Bug report filed: https://sourceforge.net/tracker/?func=detail&atid=617311&aid=3381439&group_id=97203
 """
 
 class OptionParser(optparse.OptionParser):
@@ -377,6 +379,7 @@ class Cmd(cmd.Cmd):
     debug = False
     locals_in_py = True
     kept_state = None
+    redirector = '>'                    # for sending output to file
     settable = stubbornDict('''
         prompt
         colors                Colorized output (*nix only)
@@ -626,7 +629,7 @@ class Cmd(cmd.Cmd):
           - terminator: ;
         - terminator: ;        
         >>> print (c.parser.parseString('multiline command /* with comment in progress;').dump())
-        ['multiline', ' command']
+        ['multiline', ' command /* with comment in progress;']
         - multilineCommand: multiline
         >>> print (c.parser.parseString('multiline command /* with comment complete */ is done;').dump())
         ['multiline', 'command /* with comment complete */ is done', ';', '']
@@ -646,18 +649,38 @@ class Cmd(cmd.Cmd):
           - multilineCommand: multiline
           - terminator: ['\n', '\n']
         - terminator: ['\n', '\n']
+        >>> print (c.parser.parseString('multiline command "with term; ends" now\n\n').dump())
+        ['multiline', 'command "with term; ends" now', '\n', '\n']
+        - args: command "with term; ends" now
+        - multilineCommand: multiline
+        - statement: ['multiline', 'command "with term; ends" now', '\n', '\n']
+          - args: command "with term; ends" now
+          - multilineCommand: multiline
+          - terminator: ['\n', '\n']
+        - terminator: ['\n', '\n']
+        >>> print (c.parser.parseString('what if "quoted strings /* seem to " start comments?').dump())
+        ['what', 'if "quoted strings /* seem to " start comments?']
+        - args: if "quoted strings /* seem to " start comments?
+        - command: what
+        - statement: ['what', 'if "quoted strings /* seem to " start comments?']
+          - args: if "quoted strings /* seem to " start comments?
+          - command: what
         '''
-        outputParser = (pyparsing.Literal('>>') | (pyparsing.WordStart() + '>') | pyparsing.Regex('[^=]>'))('output')
+        #outputParser = (pyparsing.Literal('>>') | (pyparsing.WordStart() + '>') | pyparsing.Regex('[^=]>'))('output')
+        outputParser = (pyparsing.Literal(self.redirector *2) | \
+                       (pyparsing.WordStart() + self.redirector) | \
+                        pyparsing.Regex('[^=]' + self.redirector))('output')
         
         terminatorParser = pyparsing.Or([(hasattr(t, 'parseString') and t) or pyparsing.Literal(t) for t in self.terminators])('terminator')
         stringEnd = pyparsing.stringEnd ^ '\nEOF'
         self.multilineCommand = pyparsing.Or([pyparsing.Keyword(c, caseless=self.case_insensitive) for c in self.multilineCommands])('multilineCommand')
         oneLineCommand = (~self.multilineCommand + pyparsing.Word(self.legalChars))('command')
         pipe = pyparsing.Keyword('|', identChars='|')
-        self.commentGrammars.ignore(pyparsing.quotedString).setParseAction(lambda x: '')        
+        self.commentGrammars.ignore(pyparsing.quotedString).setParseAction(lambda x: '')
+        doNotParse = self.commentGrammars | self.commentInProgress | pyparsing.quotedString
         afterElements = \
-            pyparsing.Optional(pipe + pyparsing.SkipTo(outputParser ^ stringEnd)('pipeTo')) + \
-            pyparsing.Optional(outputParser + pyparsing.SkipTo(stringEnd).setParseAction(lambda x: x[0].strip())('outputTo'))
+            pyparsing.Optional(pipe + pyparsing.SkipTo(outputParser ^ stringEnd, ignore=doNotParse)('pipeTo')) + \
+            pyparsing.Optional(outputParser + pyparsing.SkipTo(stringEnd, ignore=doNotParse).setParseAction(lambda x: x[0].strip())('outputTo'))
         if self.case_insensitive:
             self.multilineCommand.setParseAction(lambda x: x[0].lower())
             oneLineCommand.setParseAction(lambda x: x[0].lower())
@@ -666,11 +689,11 @@ class Cmd(cmd.Cmd):
         else:
             self.blankLineTerminator = (pyparsing.lineEnd + pyparsing.lineEnd)('terminator')
             self.blankLineTerminator.setResultsName('terminator')
-            self.blankLineTerminationParser = ((self.multilineCommand ^ oneLineCommand) + pyparsing.SkipTo(self.blankLineTerminator).setParseAction(lambda x: x[0].strip())('args') + self.blankLineTerminator)('statement')
-        self.multilineParser = (((self.multilineCommand ^ oneLineCommand) + pyparsing.SkipTo(terminatorParser, ignore=self.commentInProgress).setParseAction(lambda x: x[0].strip())('args') + terminatorParser)('statement') +
-                                pyparsing.SkipTo(outputParser ^ pipe ^ stringEnd).setParseAction(lambda x: x[0].strip())('suffix') + afterElements)
+            self.blankLineTerminationParser = ((self.multilineCommand ^ oneLineCommand) + pyparsing.SkipTo(self.blankLineTerminator, ignore=doNotParse).setParseAction(lambda x: x[0].strip())('args') + self.blankLineTerminator)('statement')
+        self.multilineParser = (((self.multilineCommand ^ oneLineCommand) + pyparsing.SkipTo(terminatorParser, ignore=doNotParse).setParseAction(lambda x: x[0].strip())('args') + terminatorParser)('statement') +
+                                pyparsing.SkipTo(outputParser ^ pipe ^ stringEnd, ignore=doNotParse).setParseAction(lambda x: x[0].strip())('suffix') + afterElements)
         self.multilineParser.ignore(self.commentInProgress)
-        self.singleLineParser = ((oneLineCommand + pyparsing.SkipTo(terminatorParser ^ stringEnd ^ pipe ^ outputParser).setParseAction(lambda x:x[0].strip())('args'))('statement') +
+        self.singleLineParser = ((oneLineCommand + pyparsing.SkipTo(terminatorParser ^ stringEnd ^ pipe ^ outputParser, ignore=doNotParse).setParseAction(lambda x:x[0].strip())('args'))('statement') +
                                  pyparsing.Optional(terminatorParser) + afterElements)
         #self.multilineParser = self.multilineParser.setResultsName('multilineParser')
         #self.singleLineParser = self.singleLineParser.setResultsName('singleLineParser')
@@ -680,9 +703,9 @@ class Cmd(cmd.Cmd):
             self.multilineParser |
             self.singleLineParser |
             self.blankLineTerminationParser | 
-            self.multilineCommand + pyparsing.SkipTo(stringEnd)
+            self.multilineCommand + pyparsing.SkipTo(stringEnd, ignore=doNotParse)
             )
-        self.parser.ignore(pyparsing.quotedString).ignore(self.commentGrammars)
+        self.parser.ignore(self.commentGrammars)
         
         inputMark = pyparsing.Literal('<')
         inputMark.setParseAction(lambda x: '')
@@ -693,7 +716,7 @@ class Cmd(cmd.Cmd):
         # as in "lesser than"
         self.inputParser = inputMark + pyparsing.Optional(inputFrom) + pyparsing.Optional('>') + \
                            pyparsing.Optional(fileName) + (pyparsing.stringEnd | '|')
-        self.inputParser.ignore(pyparsing.quotedString).ignore(self.commentGrammars).ignore(self.commentInProgress)               
+        self.inputParser.ignore(self.commentInProgress)               
     
     def preparse(self, raw, **kwargs):
         return raw
@@ -796,7 +819,7 @@ class Cmd(cmd.Cmd):
             self.kept_sys = Statekeeper(sys, ('stdout',))
             if statement.parsed.outputTo:
                 mode = 'w'
-                if statement.parsed.output == '>>':
+                if statement.parsed.output == 2 * self.redirector:
                     mode = 'a'
                 sys.stdout = self.stdout = open(os.path.expanduser(statement.parsed.outputTo), mode)                            
             else:
@@ -1055,7 +1078,9 @@ class Cmd(cmd.Cmd):
                 pass
             keepstate.restore()
             
-    def do_history(self, arg):
+    @options([make_option('-s', '--script', action="store_true", help="Script format; no separation lines"),
+             ], arg_desc = '(limit on which commands to include)')
+    def do_history(self, arg, opts):
         """history [arg]: lists past commands issued
         
         | no arg:         list all
@@ -1068,7 +1093,10 @@ class Cmd(cmd.Cmd):
         else:
             history = self.history
         for hi in history:
-            self.stdout.write(hi.pr())
+            if opts.script:
+                self.poutput(hi)
+            else:
+                self.stdout.write(hi.pr())
     def last_matching(self, arg):
         try:
             if arg:
