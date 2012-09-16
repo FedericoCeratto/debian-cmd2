@@ -1,3 +1,10 @@
+cmd2 (0.6.4-2) experimental; urgency=low
+
+  * Dependency to python-pyparsing added
+  * Debhelper version bumped to 9
+
+ -- Federico Ceratto <federico.ceratto@gmail.com>  Sun, 16 Sep 2012 16:50:46 +0100
+
 cmd2 (0.6.4-1) unstable; urgency=low
 
   * New upstream release.
