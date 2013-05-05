@@ -1,3 +1,9 @@
+cmd2 (0.6.5.1-1) UNRELEASED; urgency=low
+
+  * d/changelog: New upstream release 0.6.5.1
+
+ -- Federico Ceratto <federico.ceratto@gmail.com>  Sun, 05 May 2013 12:14:05 +0100
+
 cmd2 (0.6.4-2) experimental; urgency=low
 
   * Dependency to python-pyparsing added
