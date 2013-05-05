@@ -2,12 +2,11 @@ Source: cmd2
 Section: python
 Priority: optional
 Maintainer: Federico Ceratto <federico.ceratto@gmail.com>
-DM-Upload-Allowed: yes
 Build-Depends:
  debhelper (>= 9~)
 Build-Depends-Indep:
  python-all (>= 2.6.6-3~)
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 X-Python-Version: >= 2.5
 Homepage: https://bitbucket.org/catherinedevlin/cmd2
 Vcs-Git: git://git.debian.org/git/collab-maint/cmd2.git
