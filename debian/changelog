@@ -1,8 +1,9 @@
-cmd2 (0.6.6.1-1) UNRELEASED; urgency=low
+cmd2 (0.6.6.1-1) unstable; urgency=low
 
   * New upstream release.
+  * dpkg Pre-Depends added.
 
- -- Federico Ceratto <federico.ceratto@gmail.com>  Tue, 20 Aug 2013 23:31:42 +0100
+ -- Federico Ceratto <federico.ceratto@gmail.com>  Wed, 21 Aug 2013 22:26:20 +0100
 
 cmd2 (0.6.5.1-1) unstable; urgency=low
 
