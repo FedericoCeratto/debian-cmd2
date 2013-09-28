@@ -1,6 +1,6 @@
 cmd2 (0.6.7-1) UNRELEASED; urgency=low
 
-  * New upstream release.
+  * New upstream release. (Closes: #724206)
 
  -- Federico Ceratto <federico.ceratto@gmail.com>  Sat, 28 Sep 2013 12:20:54 +0100
 

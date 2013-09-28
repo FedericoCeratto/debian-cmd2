@@ -18,7 +18,7 @@ Pre-Depends: dpkg (>= 1.15.6~)
 Depends: ${misc:Depends}
  , ${python:Depends}
  , python-setuptools (>= 0.6.14)
- , python-pyparsing
+ , python-pyparsing (>= 2.0.1)
 Provides: ${python:Provides}
 Description: enhanced Python cmd module
  Drop-in replacement adds several features for command-prompt tools, like
