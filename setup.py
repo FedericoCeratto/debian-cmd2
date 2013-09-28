@@ -7,14 +7,14 @@ except ImportError:
         return ['sqlpython']
 import sys
 
-if sys.version_info < (3, 0, 0):
+if sys.version_info[:2] == (2, 5):
     install_requires = ['pyparsing == 1.5.7']
 else:
-    install_requires = ['pyparsing >= 2.0.0']
+    install_requires = ['pyparsing >= 2.0.1']
 
 setup(
     name="cmd2",
-    version="0.6.6.1",
+    version="0.6.7",
     py_modules=["cmd2"],
     use_2to3=True,
     
