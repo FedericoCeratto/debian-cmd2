@@ -1,8 +1,8 @@
-cmd2 (0.6.7-1) UNRELEASED; urgency=low
+cmd2 (0.6.7-1) unstable; urgency=low
 
   * New upstream release. (Closes: #724206)
 
- -- Federico Ceratto <federico.ceratto@gmail.com>  Sat, 28 Sep 2013 12:20:54 +0100
+ -- Federico Ceratto <federico.ceratto@gmail.com>  Sat, 28 Sep 2013 15:14:53 +0100
 
 cmd2 (0.6.6.1-1) unstable; urgency=low
 
