@@ -2,25 +2,45 @@ Source: cmd2
 Section: python
 Priority: optional
 Maintainer: Federico Ceratto <federico.ceratto@gmail.com>
-Build-Depends:
- debhelper (>= 9~)
-Build-Depends-Indep:
- python-all (>= 2.6.6-3~)
+Build-Depends: debhelper (>= 9~),
+               python-all (>= 2.6.6-3~),
+               python-setuptools,
+               python3-all,
+               python3-setuptools
 Standards-Version: 3.9.4
 X-Python-Version: >= 2.5
 Homepage: https://bitbucket.org/catherinedevlin/cmd2
-Vcs-Git: git://git.debian.org/git/collab-maint/cmd2.git
-Vcs-Browser: http://git.debian.org/?p=collab-maint/cmd2.git;a=summary
+Vcs-Git: git://anonscm.debian.org/collab-maint/cmd2.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/cmd2.git;a=summary
 
 Package: python-cmd2
 Architecture: all
 Pre-Depends: dpkg (>= 1.15.6~)
-Depends: ${misc:Depends}
- , ${python:Depends}
- , python-setuptools (>= 0.6.14)
- , python-pyparsing (>= 2.0.1)
+Depends: python-pyparsing (>= 2.0.1),
+         python-setuptools (>= 0.6.14),
+         ${misc:Depends},
+         ${python:Depends}
+Recommends: ${python:Recommends}
 Provides: ${python:Provides}
-Description: enhanced Python cmd module
+Description: enhanced Python cmd module - Python 2.x
  Drop-in replacement adds several features for command-prompt tools, like
  searchable and persistent command history, multi-line commands, input and
  output redirections, integrated Python shell, testing helpers
+ .
+ This package provides the Python 2.x module.
+
+Package: python3-cmd2
+Architecture: all
+Pre-Depends: dpkg (>= 1.15.6~)
+Depends: python3-pyparsing (>= 2.0.1),
+         python3-setuptools (>= 0.6.14),
+         ${misc:Depends},
+         ${python3:Depends}
+Recommends: ${python3:Recommends}
+Provides: ${python3:Provides}
+Description: enhanced Python cmd module - Python 3.x
+ Drop-in replacement adds several features for command-prompt tools, like
+ searchable and persistent command history, multi-line commands, input and
+ output redirections, integrated Python shell, testing helpers
+ .
+ This package provides the Python 3.x module.
