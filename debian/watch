@@ -1,2 +1,2 @@
 version=3
-http://pypi.python.org/packages/source/c/cmd2/cmd2-([\d\.]*)\.tar\.gz
+https://bitbucket.org/catherinedevlin/cmd2/downloads .*/(\d\S*)\.tar\.gz
